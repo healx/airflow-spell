@@ -9,12 +9,24 @@ fi
 # shellcheck source=mo
 source ./$MO
 
-export AIRFLOW_HOME=${PWD}
+# setup python env
+if [ `python -c 'import sys; print("{}{}".format(*sys.version_info[:2]))'` -lt "37" ]; then
+    echo "This script requires python 3.7 or greater"
+    exit 1
+fi
 
+python -m venv venv
+
+source venv/bin/activate
+# Currently (21/01/2020) failing with a "ImportError: cannot import name 'SourceDistribution'" error
+# https://github.com/pypa/pip/issues/7217
+# python -m pip install --upgrade pip
+python -m pip install pendulum==1.4.4
+
+export AIRFLOW_HOME=${PWD}
 export ENABLE_AIRFLOW_AUTH=1
 export AIRFLOW_VERSION=1.10.4
 
-exit
 
 function WEBSERVER_AUTH() {
     if [[ $ENABLE_AIRFLOW_AUTH == 1 ]]; then
@@ -27,25 +39,15 @@ function WEBSERVER_AUTH() {
     fi
 }
 
-virtualenv -p `which python3` .
+
 echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" >> bin/activate
-source bin/activate
-pip install --upgrade pip
-pip install pendulum==1.4.4
-AIRFLOW_GPL_UNIDECODE=true pip install apache-airflow[crypto,password,s3]==${AIRFLOW_VERSION} fastparquet
-# AIRFLOW_GPL_UNIDECODE=true pip install apache-airflow==${AIRFLOW_VERSION}
 
-if [[ $AIRFLOW_VERSION == "1.10.3" ]]; then # killme
-    # Apache Airflow : airflow initdb throws ModuleNotFoundError: No module named 'werkzeug.wrappers.json'; 'werkzeug.wrappers' is not a package error
-    # https://stackoverflow.com/questions/56933523/apache-airflow-airflow-initdb-throws-modulenotfounderror-no-module-named-wer
-    pip install -U Flask==1.0.4
-    # pip install werkzeug==0.15.5
-fi
+AIRFLOW_GPL_UNIDECODE=true python -m pip install apache-airflow[crypto,password,s3]==${AIRFLOW_VERSION} fastparquet
 
-# pip install --no-deps airflow-aws-cost-explorer
+
 rm -rf plugins
 mkdir -p plugins
-ln -sf "${PWD}/../airflow_aws_cost_explorer" plugins/airflow_aws_cost_explorer
+ln -sf "${PWD}/../airflow_spell" plugins/airflow_spell
 
 mo -u < airflow.cfg.tmpl > airflow.cfg
 airflow initdb
