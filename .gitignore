@@ -1,0 +1,8 @@
+integration-test/mo
+# virtual env
+bin/**
+lib/**
+pyvenv.cfg
+# IDE and dev
+.idea/**
+.python-version
