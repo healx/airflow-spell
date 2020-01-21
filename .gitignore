@@ -11,6 +11,7 @@ integration-test/airflow.db
 integration-test/logs/**
 integration-test/plugins/**
 integration-test/unittests.cfg
+integration-test/webserver_config.py
 # IDE and dev
 .idea/**
 .python-version
