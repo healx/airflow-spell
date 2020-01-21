@@ -9,24 +9,24 @@ webserver:
 		webserver
 
 list:
-	docker run \
-		--rm \
+	docker run --rm \
+		-v ${PWD}/integration-test:/pwd/integration-test \
+		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/integration-test/dags \
 		-ti \
 		airflow-spell \
 		airflow list_dags
 
 run:
-	docker run \
-		--rm \
+	docker run --rm \
+		-v ${PWD}/integration-test:/pwd/integration-test \
 		-ti \
 		airflow-spell \
 		bash
 
 
-check: $(wildcard dags/*.py)
-	docker run \
-		-v ${PWD}:/pwd \
-		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/dags \
-		-e AIRFLOW__CORE__PLUGINS_FOLDER=/pwd/plugins \
+check: $(wildcard integration-test/dags/*.py)
+	docker run --rm \
+		-v ${PWD}/integration-test:/pwd/integration-test \
+		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/integration-test/dags \
 		airflow-spell \
 		python /pwd/$<
