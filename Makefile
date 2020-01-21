@@ -1,18 +1,26 @@
 build:
-	docker build \
-		--rm \
-		--build-arg AIRFLOW_DEPS="slack" \
-		--build-arg PYTHON_DEPS="boto3>=1.9" \
-		-t puckel/docker-airflow docker-airflow
+	docker build . -t airflow-spell
 
 webserver:
 	docker run \
-		-v ${PWD}:/pwd \
-		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/dags \
-		-e AIRFLOW__CORE__PLUGINS_FOLDER=/pwd/plugins \
+		--rm \
 		-p 8080:8080 \
-		puckel/docker-airflow \
+		airflow-spell \
 		webserver
+
+list:
+	docker run \
+		--rm \
+		-ti \
+		airflow-spell \
+		airflow list_dags
+
+run:
+	docker run \
+		--rm \
+		-ti \
+		airflow-spell \
+		bash
 
 
 check: $(wildcard dags/*.py)
@@ -20,5 +28,5 @@ check: $(wildcard dags/*.py)
 		-v ${PWD}:/pwd \
 		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/dags \
 		-e AIRFLOW__CORE__PLUGINS_FOLDER=/pwd/plugins \
-		puckel/docker-airflow \
+		airflow-spell \
 		python /pwd/$<
