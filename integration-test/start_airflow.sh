@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-cd "$(dirname "$0")"
-if [[ ! -a bin/activate ]]; then
+cd "$(dirname "$0")" || exit
+
+if [[ ! -a venv/bin/activate ]]; then
     ./create_test_virtualenv.sh
 fi
-source bin/activate
-./bin/airflow "$@"
+source venv/bin/activate
+
+./venv/bin/airflow "$@"
