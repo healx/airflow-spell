@@ -1,18 +1,5 @@
 **/__pycache__/**
-integration-test/mo
-# virtual env
-integration-test/venv/bin/**
-integration-test/venv/include/**
-integration-test/venv/lib/**
-integration-test/venv/pyvenv.cfg
-# airflow testing
-integration-test/airflow.cfg
-integration-test/airflow.db
-integration-test/logs/**
-integration-test/plugins/**
-integration-test/unittests.cfg
-integration-test/webserver_config.py
-integration-test/airflow-webserver.pid
+*.egg-info
 # IDE and dev
 .idea/**
 .python-version
