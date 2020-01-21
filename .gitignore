@@ -1,8 +1,16 @@
+**/__pycache__/**
 integration-test/mo
 # virtual env
-bin/**
-lib/**
-pyvenv.cfg
+integration-test/venv/bin/**
+integration-test/venv/include/**
+integration-test/venv/lib/**
+integration-test/venv/pyvenv.cfg
+# airflow testing
+integration-test/airflow.cfg
+integration-test/airflow.db
+integration-test/logs/**
+integration-test/plugins/**
+integration-test/unittests.cfg
 # IDE and dev
 .idea/**
 .python-version
