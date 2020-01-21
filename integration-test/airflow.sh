@@ -6,4 +6,8 @@ if [[ ! -a venv/bin/activate ]]; then
 fi
 source venv/bin/activate
 
+export AIRFLOW_HOME=${PWD}
+export ENABLE_AIRFLOW_AUTH=1
+export AIRFLOW_VERSION=1.10.4
+
 ./venv/bin/airflow "$@"
