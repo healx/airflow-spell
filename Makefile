@@ -2,8 +2,9 @@ build:
 	docker build . -t airflow-spell
 
 webserver:
-	docker run \
-		--rm \
+	docker run --rm \
+		-v ${PWD}/integration-test:/pwd/integration-test \
+		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/integration-test/dags \
 		-p 8080:8080 \
 		airflow-spell \
 		webserver
@@ -19,6 +20,7 @@ list:
 run:
 	docker run --rm \
 		-v ${PWD}/integration-test:/pwd/integration-test \
+		-e AIRFLOW__CORE__DAGS_FOLDER=/pwd/integration-test/dags \
 		-ti \
 		airflow-spell \
 		bash
