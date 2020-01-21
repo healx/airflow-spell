@@ -12,6 +12,7 @@ integration-test/logs/**
 integration-test/plugins/**
 integration-test/unittests.cfg
 integration-test/webserver_config.py
+integration-test/airflow-webserver.pid
 # IDE and dev
 .idea/**
 .python-version
