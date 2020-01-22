@@ -2,20 +2,27 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow_spell import HelloOperator
+from airflow.operators.bash_operator import BashOperator
+from airflow_spell import SpellRunOperator
 
 
 default_args = {
-    'owner': 'Airflow',
     'depends_on_past': False,
-    'start_date': datetime(2015, 6, 1),
-    'email': ['airflow@example.com'],
-    'email_on_failure': False,
-    'email_on_retry': False,
+    'start_date': datetime(2019, 10, 13),
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=10),
+    'schedule_interval': "@never",
+    'catchup': False,
 }
 
 
-with DAG("Airflow-Spell-Testing", default_args=default_args) as dag:
-    hello_task = HelloOperator(task_id='sample-task', name='foo_bar')
+with DAG("Airflow-Spell-Testing", default_args=default_args, catchup=False) as dag:
+    first_task = BashOperator(task_id="first_task", bash_command="echo 'hello 1'")
+    hello_task = SpellRunOperator(
+        task_id="spell-task",
+        command='python -c "import sys; sys.stderr.write(sys.version)"',
+        spell_conn_id="spell_conn_id"
+    )
+    final_task = BashOperator(task_id="final_task", bash_command="echo 'hello world'")
+
+    first_task >> hello_task >> final_task
