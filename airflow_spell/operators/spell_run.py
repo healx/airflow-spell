@@ -124,7 +124,7 @@ class SpellRunOperator(BaseOperator, SpellClient):
             attached_resources: Optional[Dict[str, str]] = None,
             description: Optional[str] = None,
             idempotent: bool = False,
-            workflow_id: Optional[int] = None,
+            # workflow_id: Optional[int] = None,
             **kwargs
     ) -> None:
         BaseOperator.__init__(self, **kwargs)
@@ -150,7 +150,8 @@ class SpellRunOperator(BaseOperator, SpellClient):
         self.attached_resources = attached_resources
         self.description = description
         self.idempotent = idempotent
-        self.workflow_id = workflow_id
+        # setting workflow_id as None causes trouble for spell 0.33.0
+        # self.workflow_id = workflow_id
 
     def execute(self, context: typing.Dict):
         """
@@ -186,7 +187,7 @@ class SpellRunOperator(BaseOperator, SpellClient):
                 attached_resources=self.attached_resources,
                 description=self.description,
                 idempotent=self.idempotent,
-                workflow_id=self.workflow_id,
+                # workflow_id=self.workflow_id,
             )
             self.run_id = run.id
 
