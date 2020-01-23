@@ -160,6 +160,7 @@ class SpellRunOperator(BaseOperator, SpellClient):
         """
         self.submit_run(context)
         self.monitor_run(context)
+        return "Spell run execute completed."
 
     def submit_run(self, context: typing.Dict):  # pylint: disable=unused-argument
         self.log.info("Running Spell run")
