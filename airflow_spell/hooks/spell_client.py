@@ -10,17 +10,27 @@ from spell.client.runs import RunsService as ExternalSpellRunsService
 
 
 class SpellHook(BaseHook):
-    def __init__(self, spell_conn_id="spell_default"):
+    def __init__(self, spell_conn_id="spell_default", owner: Optional[str] = None):
         super().__init__(source=__file__)
         self.spell_conn_id = spell_conn_id
+        self.owner = owner
 
     def get_client(self):
-        return ExternalSpellClient(token=self._get_token())
+        if self.owner is not None:
+            owner = self.owner
+        else:
+            owner = self._get_owner()
+
+        return ExternalSpellClient(token=self._get_token(), owner=owner)
 
     def _get_token(self):
         # get_connection is on BaseHook
         connection_object = self.get_connection(self.spell_conn_id)
         return connection_object.password
+
+    def _get_owner(self):
+        connection_object = self.get_connection(self.spell_conn_id)
+        return connection_object.host
 
 
 class SpellClient(LoggingMixin):
