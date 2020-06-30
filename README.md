@@ -2,11 +2,6 @@
 
 ## Install
 
-Checkout locally; 
-
-`$ git clone --recurse-submodules git@github.com:healx/airflow-spell.git`
-
-
 One of;
 - Run `$ pip install -e .` in this directory
 - Add `airflow_spell` to the `PYTHONPATH` environment variable
@@ -27,5 +22,9 @@ you wish to launch runs in a team account, where `host` could be your team name.
 ## Testing
 
 Run a demonstration airflow environment;
-- `$ make build` - builds the airflow environment with `spell` installed
-- `$ make webserver` - launches airflow environment with dags in `integraion-test/dags` mounted as a dag bag.
+- `$ make build` - builds the airflow docker image with `spell` installed
+- `$ make up` - launches airflow environment at http:/0.0.0.0:8080
+
+## Testing DAGs
+
+DAGs in [`dags`](dags/) directory will be visible to the testing airflow instance
