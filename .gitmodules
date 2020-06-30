@@ -1,3 +1,0 @@
-[submodule "docker-airflow"]
-	path = docker-airflow
-	url = git@github.com:puckel/docker-airflow.git
