@@ -1,0 +1,41 @@
+version: 2
+jobs:
+  py36:
+    docker:
+      - image: "circleci/python:3.8"
+    steps:
+      - checkout
+
+      - restore_cache:
+         key: airflow-spell-{{ checksum ".circleci/config.yml" }}
+
+      - run:
+          name: "Install tox"
+          command: |
+            pip install tox
+
+      - run:
+          name: "Run tests"
+          command: tox
+
+      - save_cache:
+          key: airflow-spell-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.cache/pip
+            - ~/tox
+
+workflows:
+  version: 2
+  on_commit:
+    jobs:
+      - py38
+  nightly:
+    jobs:
+      - py38
+    triggers:
+      - schedule:
+          cron: "30 0 * * *"
+          filters:
+            branches:
+              only:
+                - main
