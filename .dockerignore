@@ -1,0 +1,11 @@
+# ignore everything
+**
+
+# allow specific directories
+!/docker/**
+!/setup.py
+!/airflow_spell/**
+
+# ignore unnecessary files inside allowed directories
+**/*~
+**/*__pycache__

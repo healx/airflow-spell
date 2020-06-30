@@ -10,7 +10,7 @@ services:
                 max-size: 10m
                 max-file: "3"
         volumes:
-            - ./integration-test/dags:/usr/local/airflow/dags
+            - ../dags:/usr/local/airflow/dags
         ports:
             - "8080:8080"
         entrypoint: /bin/bash -c "/bin/bash -c \"$${@}\""
