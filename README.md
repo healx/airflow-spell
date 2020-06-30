@@ -2,11 +2,6 @@
 
 ## Install
 
-Checkout locally; 
-
-`$ git clone --recurse-submodules git@github.com:healx/airflow-spell.git`
-
-
 One of;
 - Run `$ pip install -e .` in this directory
 - Add `airflow_spell` to the `PYTHONPATH` environment variable
@@ -23,9 +18,23 @@ The following fields in the connection map to the spell.run authentication syste
 - `host: Optional[str]` your spell.run "owner" - the entity that "owns" some object in spell - useful if 
 you wish to launch runs in a team account, where `host` could be your team name. 
 
-
 ## Testing
 
 Run a demonstration airflow environment;
-- `$ make build` - builds the airflow environment with `spell` installed
-- `$ make webserver` - launches airflow environment with dags in `integraion-test/dags` mounted as a dag bag.
+- `$ make build` - builds the airflow docker image with `spell` installed
+- `$ make up` - launches airflow environment at http:/0.0.0.0:8080
+
+### Testing DAGs
+
+DAGs in [`dags`](dags/) directory will be visible to the testing airflow instance
+
+### Provisioning the Spell Connection
+
+Put the token from above in a file in the root of the directory called `settings.env`
+
+```
+SPELL_TOKEN=<... your spell token ...>
+```
+
+Then issue `$ make add-spell-connection` and (as long as the docker-compose cluster is running)
+the spell credentials are added to the airflow connections list.

@@ -3,3 +3,6 @@
 # IDE and dev
 .idea/**
 .python-version
+
+# Do not accidentally check this in
+settings.env
