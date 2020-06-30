@@ -1,0 +1,72 @@
+version: 2.1
+
+workflows:
+  on_commit:
+    jobs:
+      - py38
+      - py37
+      - py36
+  nightly:
+    jobs:
+      - py38
+      - py37
+      - py36
+    triggers:
+      - schedule:
+          cron: "1 1 * * *"
+          filters:
+            branches:
+              only:
+                - main
+
+# run_tests is a template used by the jobs in jobs:
+commands:
+  run_tests:
+    description: "Checkout, restore cache / build cache, run tests, cache"
+    parameters:
+      python_version:
+        type: string
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
+
+      - run:
+          name: "Install tox"
+          command: |
+            pip install tox
+
+      - run:
+          name: "Run tests"
+          command: |
+            tox -e << parameters.python_version >>
+
+      - save_cache:
+          key: dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
+          paths:
+            - ".cache/pip"
+            - ".tox"
+
+jobs:
+  py38:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - run_tests:
+          python_version: "py38"
+
+  py37:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - run_tests:
+          python_version: "py37"
+
+  py36:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - run_tests:
+          python_version: "py36"

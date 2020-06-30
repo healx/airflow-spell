@@ -3,6 +3,7 @@
 # IDE and dev
 .idea/**
 .python-version
+.tox
 
 # Do not accidentally check this in
 settings.env
