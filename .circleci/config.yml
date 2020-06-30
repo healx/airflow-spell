@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  py36:
+  py38:
     docker:
       - image: "circleci/python:3.8"
     steps:
