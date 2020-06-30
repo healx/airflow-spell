@@ -9,7 +9,6 @@ def test_run_operator_can_be_created():
         task_id="testing-task-id",
     )
 
-
     assert_that(run_operator, has_attrs(
         spell_conn_id="testing-spell-run-operator",
         command="DO IT NOW!",
