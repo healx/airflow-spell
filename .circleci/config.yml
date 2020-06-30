@@ -6,13 +6,11 @@ workflows:
       - py38
       - py37
       - py36
-      - py35
   nightly:
     jobs:
       - py38
       - py37
       - py36
-      - py35
     triggers:
       - schedule:
           cron: "1 1 * * *"
@@ -72,10 +70,3 @@ jobs:
     steps:
       - run_tests:
           python_version: "py36"
-
-  py35:
-    docker:
-      - image: circleci/python:3.5
-    steps:
-      - run_tests:
-          python_version: "py35"
