@@ -8,6 +8,7 @@ setup(
     description="Apache Airflow integration for spell.run",
     packages=find_packages(include=["airflow_spell", "airflow_spell.*"]),
     install_requires=[
-        "spell>=0.38.4,<1.0"
+        "apache-airflow>=1.10.2,<2.0",
+        "spell>=0.38.4,<1.0",
     ]
 )
