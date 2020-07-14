@@ -7,3 +7,7 @@
 
 # Do not accidentally check this in
 settings.env
+
+# temporary distribution caches
+build
+dist

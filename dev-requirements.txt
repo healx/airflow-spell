@@ -1,3 +1,4 @@
 apache-airflow==1.10.10
 precisely==0.1.8
 pytest==5.4.3
+twine==3.2.0
