@@ -6,11 +6,13 @@ workflows:
       - py38
       - py37
       - py36
+      - py36-compat
   nightly:
     jobs:
       - py38
       - py37
       - py36
+      - py36-compat
     triggers:
       - schedule:
           cron: "1 1 * * *"
@@ -55,18 +57,25 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - run_tests:
-          python_version: "py38"
+          python_version: "py38-airflow"
 
   py37:
     docker:
       - image: circleci/python:3.7
     steps:
       - run_tests:
-          python_version: "py37"
+          python_version: "py37-airflow"
 
   py36:
     docker:
       - image: circleci/python:3.6
     steps:
       - run_tests:
-          python_version: "py36"
+          python_version: "py36-airflow"
+
+  py36-compat:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - run_tests:
+          python_version: "py36-airflow1.10.2"
