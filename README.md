@@ -38,3 +38,21 @@ SPELL_TOKEN=<... your spell token ...>
 
 Then issue `$ make add-spell-connection` and (as long as the docker-compose cluster is running)
 the spell credentials are added to the airflow connections list.
+
+## Building and Releasing
+
+To build the source and binary distributions run
+
+```
+$ make release
+```
+This requires `twine` to be installed - it is listed in [`dev-requirements.txt`](dev-requirements.txt).
+
+(Remember to bump the version number in [`setup.py`!](setup.py).)
+
+To upload the release, run
+
+```
+$ make upload-release
+```
+NB You will be prompted for a pypi username and password.

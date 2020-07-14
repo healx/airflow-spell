@@ -52,3 +52,11 @@ check: $(wildcard dags/*.py)
 	docker-compose \
 		-f $(docker_dir)/docker-compose.yml \
 		exec webserver python /usr/local/airflow/$<
+
+release:
+	python setup.py sdist
+	python setup.py bdist_wheel --universal
+	twine check dist/*
+
+upload-release: release
+	twine upload dist/*
