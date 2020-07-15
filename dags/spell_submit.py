@@ -21,7 +21,9 @@ with DAG("Airflow-Spell-Testing", default_args=default_args, catchup=False) as d
     hello_task = SpellRunOperator(
         task_id="spell-task",
         command='python -c "import sys; sys.stderr.write(sys.version)"',
-        spell_conn_id="spell_conn_id"
+        spell_conn_id="spell_conn_id",
+        # spell_owner="organisation",  # for example, if different to username, default is username
+        # machine_type="GPU-V100",  # for example, default os "CPU"
     )
     final_task = BashOperator(task_id="final_task", bash_command="echo 'hello world'")
 
