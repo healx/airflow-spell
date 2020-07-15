@@ -56,3 +56,10 @@ To upload the release, run
 $ make upload-release
 ```
 NB You will be prompted for a pypi username and password.
+
+## Notes about previous versions
+
+* apache-airflow 1.10.6
+
+This version has an unmet / unlisted dependecy on `blinker`. The `blinker` module must be installed when
+installing this version of apache-airflow.
