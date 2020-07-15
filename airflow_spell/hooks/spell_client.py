@@ -41,16 +41,17 @@ class SpellClient(LoggingMixin):
     DEFAULT_DELAY_MIN = 1
     DEFAULT_DELAY_MAX = 10
 
-    def __init__(self, spell_conn_id: Optional[str] = None):
+    def __init__(self, spell_conn_id: Optional[str] = None, spell_owner: Optional[str] = None):
         super().__init__()
         self.spell_conn_id = spell_conn_id
+        self.spell_owner = spell_owner
         self._hook: Optional[SpellHook] = None
         self._client: Optional[ExternalSpellClient] = None
 
     @property
     def hook(self) -> SpellHook:
         if self._hook is None:
-            self._hook = SpellHook(spell_conn_id=self.spell_conn_id)
+            self._hook = SpellHook(spell_conn_id=self.spell_conn_id, owner=self.spell_owner)
         return self._hook
 
     @property

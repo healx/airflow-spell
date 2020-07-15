@@ -18,6 +18,29 @@ The following fields in the connection map to the spell.run authentication syste
 - `host: Optional[str]` your spell.run "owner" - the entity that "owns" some object in spell - useful if 
 you wish to launch runs in a team account, where `host` could be your team name. 
 
+## Creating a spell run from Airflow `SpellRunOperator`
+
+``` python
+    hello_task = SpellRunOperator(
+        task_id="spell-task",
+        command='python -c "import sys; sys.stderr.write(sys.version)"',
+        spell_conn_id="spell_conn_id",
+        spell_owner="organisation",
+        machine_type="GPU-V100",
+    )
+```
+
+Create spell runs using the `SpellRunOperator`. 
+
+* `task_id: (str)` must be set for all DAG operators
+* `command: (str)` the command to be executed in the spell run (see 
+[spell API](https://spell.ml/docs/runs) docs)
+* `spell_conn_id: (str)` the name of the Airflow connection setup in [Connection](#Connection) section
+* `spell_ownder: (str)` by default your spell user name, over-riding this is helpful if you have an 
+organizational plan
+* `machine_type`: (str)` for setting the type of machine to run the spell run on (default "CPU")
+
+
 ## Testing
 
 Run a demonstration airflow environment;

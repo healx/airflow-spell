@@ -16,6 +16,11 @@ class SpellRunOperator(BaseOperator, SpellClient):
     Execute a run on Spell Run (same args as spell.client.runs.RunService
 
     Args:
+        spell_conn_id (str): Airflow connection id for spell
+        spell_owner (str, optional): Spell owner (if different from user account)
+        task_id (str, optional):
+        params (dict, optional):
+        (all commands below passed to SpellClient)
         command (str): the command to run
         machine_type (str, optional): the machine type for the run (default: CPU)
         workspace_id (int, optional): the workspace ID for code to include in the run (default: None)
@@ -64,8 +69,9 @@ class SpellRunOperator(BaseOperator, SpellClient):
     def __init__(self, **kwargs) -> None:
         BaseOperator.__init__(self, **kwargs)
         spell_conn_id = kwargs.pop("spell_conn_id")
+        spell_owner = kwargs.pop("spell_owner", None)
+        SpellClient.__init__(self, spell_conn_id=spell_conn_id, spell_owner=spell_owner)
         self.task_id = kwargs.pop("task_id")
-        SpellClient.__init__(self, spell_conn_id=spell_conn_id)
         self.params = kwargs.pop("params")
         self.kwargs = kwargs
 
