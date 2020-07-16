@@ -7,12 +7,12 @@ from airflow_spell import SpellRunOperator
 
 
 default_args = {
-    'depends_on_past': False,
-    'start_date': datetime(2019, 10, 13),
-    'retries': 1,
-    'retry_delay': timedelta(minutes=10),
-    'schedule_interval': "@never",
-    'catchup': False,
+    "depends_on_past": False,
+    "start_date": datetime(2019, 10, 13),
+    "retries": 1,
+    "retry_delay": timedelta(minutes=10),
+    "schedule_interval": "@never",
+    "catchup": False,
 }
 
 

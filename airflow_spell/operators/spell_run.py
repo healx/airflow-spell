@@ -62,6 +62,7 @@ class SpellRunOperator(BaseOperator, SpellClient):
             This argument is unnecessary if the :py:attr:`~spell.client.SpellClient.active_workflow` of
             the client is set and this argument will take precedence if they differ.
     """
+
     ui_color = "#f2f0f6"
     ui_fgcolor = "#3c1fd1"
 
