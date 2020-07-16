@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
-from airflow_spell import SpellRunOperator
+from airflow_spell import SpellRunOperator, SpellUploadOperator
 
 
 default_args = {
@@ -17,7 +17,12 @@ default_args = {
 
 
 with DAG("Airflow-Spell-Testing", default_args=default_args, catchup=False) as dag:
-    first_task = BashOperator(task_id="first_task", bash_command="echo 'hello 1'")
+    first_task = BashOperator(
+        task_id="first_task", bash_command="echo 'hello 1' > test.file"
+    )
+    upload_task = SpellUploadOperator(
+        task_id="spell-upload", spell_conn_id="spell_conn_id", local_path="test.file"
+    )
     hello_task = SpellRunOperator(
         task_id="spell-task",
         command='python -c "import sys; sys.stderr.write(sys.version)"',
@@ -27,4 +32,4 @@ with DAG("Airflow-Spell-Testing", default_args=default_args, catchup=False) as d
     )
     final_task = BashOperator(task_id="final_task", bash_command="echo 'hello world'")
 
-    first_task >> hello_task >> final_task
+    first_task >> upload_task >> hello_task >> final_task
