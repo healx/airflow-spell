@@ -41,7 +41,9 @@ class SpellClient(LoggingMixin):
     DEFAULT_DELAY_MIN = 1
     DEFAULT_DELAY_MAX = 10
 
-    def __init__(self, spell_conn_id: Optional[str] = None, spell_owner: Optional[str] = None):
+    def __init__(
+        self, spell_conn_id: Optional[str] = None, spell_owner: Optional[str] = None
+    ):
         super().__init__()
         self.spell_conn_id = spell_conn_id
         self.spell_owner = spell_owner
@@ -51,7 +53,9 @@ class SpellClient(LoggingMixin):
     @property
     def hook(self) -> SpellHook:
         if self._hook is None:
-            self._hook = SpellHook(spell_conn_id=self.spell_conn_id, owner=self.spell_owner)
+            self._hook = SpellHook(
+                spell_conn_id=self.spell_conn_id, owner=self.spell_owner
+            )
         return self._hook
 
     @property
@@ -106,12 +110,14 @@ class SpellClient(LoggingMixin):
             ExternalSpellRunsService.BUILDING,
             ExternalSpellRunsService.PUSHING,
             ExternalSpellRunsService.RUNNING,
-            ExternalSpellRunsService.SAVING
+            ExternalSpellRunsService.SAVING,
         ]
         if run_status in STILL_RUNNING:
             raise AirflowException(f"Spell ({run_id}) is not complete: {run}")
 
-        raise AirflowException(f"Spell ({run_id}) has unknown status ({run_status}): {run}")
+        raise AirflowException(
+            f"Spell ({run_id}) has unknown status ({run_status}): {run}"
+        )
 
     def poll_for_run_running(self, run_id: str, delay: Union[int, float, None] = None):
         """
@@ -183,13 +189,17 @@ class SpellClient(LoggingMixin):
             run = self.get_run(run_id)
             run_status = run.status
 
-            self.log.info(f"Spell run ({run_id}) check status ({run_status}) in {match_status}")
+            self.log.info(
+                f"Spell run ({run_id}) check status ({run_status}) in {match_status}"
+            )
 
             if run_status in match_status:
                 return True
 
             if retries >= self.MAX_RETRIES:
-                raise AirflowException(f"Spell run ({run_id}) status checks exceed max_retries")
+                raise AirflowException(
+                    f"Spell run ({run_id}) status checks exceed max_retries"
+                )
 
             retries += 1
             pause = _exponential_delay(retries)
@@ -230,7 +240,9 @@ def _exponential_delay(tries: int) -> float:
 
 
 def _add_jitter(
-    delay: Union[int, float], width: Union[int, float] = 1, minima: Union[int, float] = 0
+    delay: Union[int, float],
+    width: Union[int, float] = 1,
+    minima: Union[int, float] = 0,
 ) -> float:
     """
     Use delay +/- width for random jitter

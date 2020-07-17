@@ -12,7 +12,7 @@ def test_client_can_be_created():
 def test_delay_delays_for_duration_within_bounds():
     start = default_timer()
     for _ in range(10):
-        _delay(delay=.1)  # .1 second
+        _delay(delay=0.1)  # .1 second
     average_duration = (default_timer() - start) / 10
 
     assert_that(average_duration, less_than(1))
