@@ -3,7 +3,9 @@ version: 2.1
 workflows:
   push_test:
     jobs:
-      - private_push
+      - private_push:
+          context:
+            - AWS harper package pusher
 
   on_commit:
     jobs:
@@ -44,7 +46,9 @@ commands:
       - run:
           name: "private release"
           command: |
+            python -m pip cache info
             pip install -r dev-requirements.txt .
+            pip install "awscli>=1.8"
             make upload-private-release
 
       - save_cache:
