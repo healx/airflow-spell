@@ -56,6 +56,7 @@ commands:
           paths:
             - ".cache/pip"
             - ".tox"
+            - "/home/circleci/.cache/pip/http"
 
 jobs:
   private_push:
