@@ -68,5 +68,4 @@ upload-private-release: release
 ifndef AWS_ACCOUNT_ID
 	$(error AWS_ACCOUNT_ID is undefined)
 endif
-	printenv TWINE_USERNAME	TWINE_PASSSWORD TWINE_REPOSITORY_URL
-	twine upload --verbose --repository-url $$TWINE_REPOSITORY_URL dist/*
+	unset DBUS_SESSION_BUS_ADDRESS; twine upload --verbose --repository-url $$TWINE_REPOSITORY_URL dist/*
