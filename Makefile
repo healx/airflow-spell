@@ -63,11 +63,12 @@ upload-release: release
 
 upload-private-release: export TWINE_USERNAME=aws
 upload-private-release: export TWINE_PASSSWORD=$(shell aws codeartifact get-authorization-token --domain harper --domain-owner $(AWS_ACCOUNT_ID) --query authorizationToken --output text)
+upload-private-release: export TWINE_REPOSITORY_URL=$(shell aws codeartifact get-repository-endpoint --domain harper --domain-owner $(AWS_ACCOUNT_ID) --repository v0 --format pypi --query repositoryEndpoint --output text)
 upload-private-release: release
 ifndef AWS_ACCOUNT_ID
 	$(error AWS_ACCOUNT_ID is undefined)
 endif
-ifndef TWINE_REPOSITORY
-	$(error TWINE_REPOSITORY is undefined)
+ifndef TWINE_REPOSITORY_URL
+	$(error TWINE_REPOSITORY_URL is undefined)
 endif
-	twine upload --verbose --repository-url $(TWINE_REPOSITORY) dist/*
+	twine upload --verbose --repository-url $(TWINE_REPOSITORY_URL) dist/*
