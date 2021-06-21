@@ -68,7 +68,4 @@ upload-private-release: release
 ifndef AWS_ACCOUNT_ID
 	$(error AWS_ACCOUNT_ID is undefined)
 endif
-ifndef TWINE_REPOSITORY_URL
-	$(error TWINE_REPOSITORY_URL is undefined)
-endif
-	twine upload --verbose --repository-url $(TWINE_REPOSITORY_URL) dist/*
+	twine upload --verbose --repository-url $$TWINE_REPOSITORY_URL dist/*
