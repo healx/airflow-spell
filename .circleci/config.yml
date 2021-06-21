@@ -1,6 +1,10 @@
 version: 2.1
 
 workflows:
+  push_test:
+    jobs:
+      - private_push
+
   on_commit:
     jobs:
       - py38
@@ -38,14 +42,10 @@ commands:
             - dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
 
       - run:
-          name: "Install tox"
+          name: "private release"
           command: |
-            pip install tox
-
-      - run:
-          name: "Run tests"
-          command: |
-            tox -e << parameters.python_version >>
+            pip install -r dev-requirements.txt .
+            make upload-private-release
 
       - save_cache:
           key: dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
@@ -54,6 +54,13 @@ commands:
             - ".tox"
 
 jobs:
+  private_push:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - run_tests:
+          python_version: "py38-airflow"
+
   py38:
     docker:
       - image: circleci/python:3.8
