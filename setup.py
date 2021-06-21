@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="airflow-spell",
-    version="0.0.4",
+    name="something-else",
+    version="0.0.5",
     author="Dan O'Donovan",
     author_email="dan.odonovan@healx.io",
     description="Apache Airflow integration for spell.run",
