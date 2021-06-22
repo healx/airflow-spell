@@ -23,6 +23,8 @@ workflows:
       - py38
       - py37
       - upload_private_packages_py37:
+          context:
+            - AWS harper package pusher
           requires:
             - py37
           filters:
@@ -31,6 +33,8 @@ workflows:
             branches:
               ignore: /.*/
       - upload_private_packages_py38:
+          context:
+            - AWS harper package pusher
           requires:
             - py38
           filters:
