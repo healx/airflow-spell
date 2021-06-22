@@ -18,6 +18,26 @@ workflows:
             branches:
               only:
                 - main
+  release:
+    jobs:
+      - py38
+      - py37
+      - upload_private_packages_py37:
+          requires:
+            - py37
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - upload_private_packages_py38:
+          requires:
+            - py38
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
 
 # run_tests is a template used by the jobs in jobs:
 commands:
@@ -49,7 +69,46 @@ commands:
             - "~/.cache/pip"
             - ".tox"
 
+  build_and_upload_private_packages:
+    description: "Build packages and upload packages to private repository"
+    parameters:
+      python_version:
+        type: string
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
+
+      - run:
+          name: "make private release"
+          command: |
+            pip install -r dev-requirements.txt .
+            pip install "awscli>=1.8"
+            make upload-private-release
+
+      - save_cache:
+          key: dependencies-<< parameters.python_version >>-{{ checksum "dev-requirements.txt" }}
+          paths:
+            - "~/.cache/pip"
+            - ".tox"
+
 jobs:
+  upload_private_packages_py37:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - build_and_upload_private_packages:
+          python_version: "py37"
+
+  upload_private_packages_py38:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - build_and_upload_private_packages:
+          python_version: "py38"
+
   py38:
     docker:
       - image: circleci/python:3.8
