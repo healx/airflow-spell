@@ -49,7 +49,7 @@ Run a demonstration airflow environment;
 
 ### Testing DAGs
 
-DAGs in [`dags`](dags/) directory will be visible to the testing airflow instance
+DAGs in `dags/` directory will be visible to the testing airflow instance
 
 ### Provisioning the Spell Connection
 
@@ -63,15 +63,18 @@ Then issue `$ make add-spell-connection` and (as long as the docker-compose clus
 the spell credentials are added to the airflow connections list.
 
 ## Building and Releasing
+These steps require `twine` to be installed - it is listed in
+[`dev-requirements.txt`](dev-requirements.txt).
 
-To build the source and binary distributions run
+(Remember to bump the version number in [`setup.py`](setup.py)!)
+
+### PyPA PyPI release
+
+To build the source and binary distributions
 
 ```
 $ make release
 ```
-This requires `twine` to be installed - it is listed in [`dev-requirements.txt`](dev-requirements.txt).
-
-(Remember to bump the version number in [`setup.py`!](setup.py).)
 
 To upload the release, run
 
@@ -79,6 +82,17 @@ To upload the release, run
 $ make upload-release
 ```
 NB You will be prompted for a pypi username and password.
+
+### AWS CodeArtifact Release
+
+To build the source binary distributions and upload to AWS CodeArtifact
+
+```
+$ make upload-private-release
+```
+NB This requires your `AWS_PROFILE` user to have the correct IAM permissions
+and that the env var `AWS_ACCOUNT_ID` is set.
+
 
 ## Notes about previous versions
 
