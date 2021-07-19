@@ -2,8 +2,9 @@ from random import uniform
 from time import sleep
 from typing import List, Optional, Union
 
-from airflow import LoggingMixin, AirflowException
-from airflow.hooks.base_hook import BaseHook
+from airflow.exceptions import AirflowException
+from airflow.hooks.base import BaseHook
+from airflow.utils.log.logging_mixin import LoggingMixin
 from spell.client import SpellClient as ExternalSpellClient
 from spell.client.runs import Run as ExternalSpellRun
 from spell.client.runs import RunsService as ExternalSpellRunsService
@@ -11,7 +12,7 @@ from spell.client.runs import RunsService as ExternalSpellRunsService
 
 class SpellHook(BaseHook):
     def __init__(self, spell_conn_id="spell_default", owner: Optional[str] = None):
-        super().__init__(source=__file__)
+        super().__init__()
         self.spell_conn_id = spell_conn_id
         self.owner = owner
 

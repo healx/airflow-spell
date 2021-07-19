@@ -1,8 +1,7 @@
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from airflow import AirflowException
 from airflow.models import BaseOperator
-from airflow.utils.decorators import apply_defaults
 
 from airflow_spell import SpellClient
 
