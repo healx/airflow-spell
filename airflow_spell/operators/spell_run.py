@@ -1,4 +1,4 @@
-import typing
+from typing import Any, Dict, Optional
 
 from airflow import AirflowException
 from airflow.models import BaseOperator
@@ -66,16 +66,19 @@ class SpellRunOperator(BaseOperator, SpellClient):
     ui_color = "#f2f0f6"
     ui_fgcolor = "#3c1fd1"
 
-    def __init__(self, **kwargs) -> None:
-        BaseOperator.__init__(self, **kwargs)
-        spell_conn_id = kwargs.pop("spell_conn_id")
-        spell_owner = kwargs.pop("spell_owner", None)
+    def __init__(
+        self,
+        *,
+        task_id: str,
+        spell_owner: Optional[str] = None,
+        spell_conn_id: Optional[str] = None,
+        **kwargs,
+    ):
+        BaseOperator.__init__(self, task_id=task_id)
         SpellClient.__init__(self, spell_conn_id=spell_conn_id, spell_owner=spell_owner)
-        self.task_id = kwargs.pop("task_id")
-        self.params = kwargs.pop("params")
         self.kwargs = kwargs
 
-    def execute(self, context: typing.Dict):
+    def execute(self, context: Dict):
         """
         Submit and monitor a Spell run
         :raises: AirflowException
@@ -84,29 +87,29 @@ class SpellRunOperator(BaseOperator, SpellClient):
         self.monitor_run(context)
         return "Spell run execute completed."
 
-    def submit_run(self, context: typing.Dict):  # pylint: disable=unused-argument
+    def submit_run(self, context: Dict):  # pylint: disable=unused-argument
         self.log.info("Running Spell run")
 
         try:
             run = self.client.runs.new(**self.kwargs)
-            self.run_id = run.id
+            self.spell_run_id = run.id
 
-            self.log.info(f"Spell run ({self.run_id}) started: {run}")
+            self.log.info(f"Spell run (spell_run_id: {self.spell_run_id}) started: {run}")
 
         except Exception as e:
             self.log.info(f"Spell run (task_id: {self.task_id}) failed submission")
             raise AirflowException(e)
 
-    def monitor_run(self, context: typing.Dict):  # pylint: disable=unused-argument
+    def monitor_run(self, context: Dict):  # pylint: disable=unused-argument
         """
         Monitor a Spell run
         :raises: AirflowException
         """
         try:
-            self.wait_for_run(self.run_id)
-            self.check_run_success(self.run_id)
-            self.log.info(f"Spell run ({self.run_id}) succeeded")
+            self.wait_for_run(self.spell_run_id)
+            self.check_run_success(self.spell_run_id)
+            self.log.info(f"Spell run ({self.spell_run_id}) succeeded")
 
         except Exception as e:
-            self.log.info(f"Spell run ({self.run_id}) failed monitoring")
+            self.log.info(f"Spell run ({self.spell_run_id}) failed monitoring")
             raise AirflowException(e)
