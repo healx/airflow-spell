@@ -66,7 +66,6 @@ class SpellRunOperator(BaseOperator, SpellClient):
     ui_color = "#f2f0f6"
     ui_fgcolor = "#3c1fd1"
 
-    @apply_defaults
     def __init__(self, **kwargs) -> None:
         BaseOperator.__init__(self, **kwargs)
         spell_conn_id = kwargs.pop("spell_conn_id")
