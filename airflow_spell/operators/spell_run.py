@@ -94,10 +94,10 @@ class SpellRunOperator(BaseOperator, SpellClient):
             run = self.client.runs.new(**self.kwargs)
             self.spell_run_id = run.id
 
-            self.log.info(f"Spell run (spell_run_id: {self.spell_run_id}) started: {run}")
+            self.log.info("Spell run (spell_run_id: %s) started: %s" % (self.spell_run_id, str(run)))
 
         except Exception as e:
-            self.log.info(f"Spell run (task_id: {self.task_id}) failed submission")
+            self.log.info("Spell run (task_id: %s) failed submission" % self.task_id)
             raise AirflowException(e)
 
     def monitor_run(self, context: Dict):  # pylint: disable=unused-argument
@@ -108,8 +108,8 @@ class SpellRunOperator(BaseOperator, SpellClient):
         try:
             self.wait_for_run(self.spell_run_id)
             self.check_run_success(self.spell_run_id)
-            self.log.info(f"Spell run ({self.spell_run_id}) succeeded")
+            self.log.info("Spell run (%s) succeeded" % self.spell_run_id)
 
         except Exception as e:
-            self.log.info(f"Spell run ({self.spell_run_id}) failed monitoring")
+            self.log.info("Spell run (%s) failed monitoring" % self.spell_run_id)
             raise AirflowException(e)
