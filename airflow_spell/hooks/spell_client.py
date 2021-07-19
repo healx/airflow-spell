@@ -2,8 +2,9 @@ from random import uniform
 from time import sleep
 from typing import List, Optional, Union
 
-from airflow import LoggingMixin, AirflowException
-from airflow.hooks.base_hook import BaseHook
+from airflow.exceptions import AirflowException
+from airflow.hooks.base import BaseHook
+from airflow.utils.log.logging_mixin import LoggingMixin
 from spell.client import SpellClient as ExternalSpellClient
 from spell.client.runs import Run as ExternalSpellRun
 from spell.client.runs import RunsService as ExternalSpellRunsService
@@ -11,7 +12,7 @@ from spell.client.runs import RunsService as ExternalSpellRunsService
 
 class SpellHook(BaseHook):
     def __init__(self, spell_conn_id="spell_default", owner: Optional[str] = None):
-        super().__init__(source=__file__)
+        super().__init__()
         self.spell_conn_id = spell_conn_id
         self.owner = owner
 
@@ -31,6 +32,14 @@ class SpellHook(BaseHook):
     def _get_owner(self):
         connection_object = self.get_connection(self.spell_conn_id)
         return connection_object.host
+
+
+STILL_RUNNING = [
+    ExternalSpellRunsService.BUILDING,
+    ExternalSpellRunsService.PUSHING,
+    ExternalSpellRunsService.RUNNING,
+    ExternalSpellRunsService.SAVING,
+]
 
 
 class SpellClient(LoggingMixin):
@@ -106,12 +115,6 @@ class SpellClient(LoggingMixin):
         if run_status == ExternalSpellRunsService.FAILED:
             raise AirflowException(f"Spell run ({run_id}) failed: {run}")
 
-        STILL_RUNNING = [
-            ExternalSpellRunsService.BUILDING,
-            ExternalSpellRunsService.PUSHING,
-            ExternalSpellRunsService.RUNNING,
-            ExternalSpellRunsService.SAVING,
-        ]
         if run_status in STILL_RUNNING:
             raise AirflowException(f"Spell ({run_id}) is not complete: {run}")
 
@@ -131,8 +134,8 @@ class SpellClient(LoggingMixin):
         changes too quickly for polling to detect a RUNNING status that moves
         quickly from STARTING to RUNNING to completed (often a failure).
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell run ID
+        :type run_id: str
 
         :param delay: a delay before polling for job status
         :type delay: Optional[Union[int, float]]
@@ -156,8 +159,8 @@ class SpellClient(LoggingMixin):
         So the status options that this will wait for are the transitions from:
         'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'>'SUCCEEDED'|'FAILED'
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell run ID
+        :type run_id: str
 
         :param delay: a delay before polling for job status
         :type delay: Optional[Union[int, float]]
@@ -172,8 +175,8 @@ class SpellClient(LoggingMixin):
         """
         Poll for job status using an exponential back-off strategy (with max_retries).
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell ID
+        :type run_id: str
 
         :param match_status: a list of job status to match; the batch job status are:
             'SUBMITTED'|'PENDING'|'RUNNABLE'|'STARTING'|'RUNNING'|'SUCCEEDED'|'FAILED'
