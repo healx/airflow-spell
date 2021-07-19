@@ -33,6 +33,14 @@ class SpellHook(BaseHook):
         return connection_object.host
 
 
+STILL_RUNNING = [
+    ExternalSpellRunsService.BUILDING,
+    ExternalSpellRunsService.PUSHING,
+    ExternalSpellRunsService.RUNNING,
+    ExternalSpellRunsService.SAVING,
+]
+
+
 class SpellClient(LoggingMixin):
     MAX_RETRIES = 4200
     STATUS_RETRIES = 10
@@ -106,12 +114,6 @@ class SpellClient(LoggingMixin):
         if run_status == ExternalSpellRunsService.FAILED:
             raise AirflowException(f"Spell run ({run_id}) failed: {run}")
 
-        STILL_RUNNING = [
-            ExternalSpellRunsService.BUILDING,
-            ExternalSpellRunsService.PUSHING,
-            ExternalSpellRunsService.RUNNING,
-            ExternalSpellRunsService.SAVING,
-        ]
         if run_status in STILL_RUNNING:
             raise AirflowException(f"Spell ({run_id}) is not complete: {run}")
 
@@ -131,8 +133,8 @@ class SpellClient(LoggingMixin):
         changes too quickly for polling to detect a RUNNING status that moves
         quickly from STARTING to RUNNING to completed (often a failure).
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell run ID
+        :type run_id: str
 
         :param delay: a delay before polling for job status
         :type delay: Optional[Union[int, float]]
@@ -156,8 +158,8 @@ class SpellClient(LoggingMixin):
         So the status options that this will wait for are the transitions from:
         'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'>'SUCCEEDED'|'FAILED'
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell run ID
+        :type run_id: str
 
         :param delay: a delay before polling for job status
         :type delay: Optional[Union[int, float]]
@@ -172,8 +174,8 @@ class SpellClient(LoggingMixin):
         """
         Poll for job status using an exponential back-off strategy (with max_retries).
 
-        :param job_id: a batch job ID
-        :type job_id: str
+        :param run_id: a spell ID
+        :type run_id: str
 
         :param match_status: a list of job status to match; the batch job status are:
             'SUBMITTED'|'PENDING'|'RUNNABLE'|'STARTING'|'RUNNING'|'SUCCEEDED'|'FAILED'

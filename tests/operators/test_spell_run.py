@@ -4,12 +4,14 @@ from airflow_spell import SpellRunOperator
 
 def test_run_operator_can_be_created():
     run_operator = SpellRunOperator(
-        spell_conn_id="testing-spell-run-operator", task_id="testing-task-id",
+        spell_conn_id="testing-spell-run-operator",
+        task_id="testing-task-id",
     )
 
     assert_that(
         run_operator,
         has_attrs(
-            spell_conn_id="testing-spell-run-operator", task_id="testing-task-id",
+            spell_conn_id="testing-spell-run-operator",
+            task_id="testing-task-id",
         ),
     )
