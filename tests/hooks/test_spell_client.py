@@ -106,3 +106,24 @@ class TestWaitForRun:
             # Act - if this process completes, we don't see an exception
             # (it waits and then exits)
             spell_client.wait_for_run(run_id="test1", delay=0)
+
+    def test_fast_jobs_end(self, monkeypatch, spell_client):
+        # Catch issue where jobs that go straight from "machine_requested" to "COMPLETE"
+        # don't report as COMPLETE
+        with patch(
+            "spell.client.runs.RunsService", new_callable=PropertyMock
+        ) as mocked_get_run_status:
+            mocked_get_run_status.side_effect = [
+                "machine_requested",
+                RunsService.COMPLETE,
+            ]
+
+            monkeypatch.setattr(
+                SpellClient,
+                "_get_run",
+                mock_changing_get_run(status=mocked_get_run_status),
+            )
+
+            # Act - if this process completes, we don't see an exception
+            # (it waits and then exits)
+            spell_client.wait_for_run(run_id="test1", delay=0)

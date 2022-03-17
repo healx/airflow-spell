@@ -8,6 +8,7 @@ from airflow.utils.log.logging_mixin import LoggingMixin
 from spell.client import SpellClient as ExternalSpellClient
 from spell.client.runs import Run as ExternalSpellRun
 from spell.client.runs import RunsService as ExternalSpellRunsService
+from spell.cli.commands.ps import status_names
 
 
 class SpellHook(BaseHook):
@@ -148,7 +149,7 @@ class SpellClient(LoggingMixin):
             ExternalSpellRunsService.RUNNING,
             ExternalSpellRunsService.SAVING,
             ExternalSpellRunsService.PUSHING,
-        ]
+        ] + list(status_names.keys())
         self._poll_run_status(run_id, running_status)
 
     def _poll_for_run_complete(
