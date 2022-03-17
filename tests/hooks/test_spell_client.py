@@ -1,7 +1,7 @@
 import inspect
 from timeit import default_timer
 from typing import Callable
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from airflow.exceptions import AirflowException
 from precisely import assert_that, has_attr, is_instance, less_than, raises
@@ -28,9 +28,7 @@ def test_delay_delays_for_duration_within_bounds():
 
 @pytest.fixture
 def spell_client() -> SpellClient:
-    client = SpellClient()
-    client.MAX_RETRIES = 2
-    return client
+    return SpellClient()
 
 
 def mock_get_run(status) -> Callable:
@@ -61,3 +59,50 @@ class TestRunComplete:
             lambda: spell_client.check_run_complete(run_id="test1"),
             raises(is_instance(AirflowException)),
         )
+
+
+def mock_changing_get_run(status) -> Callable:
+    def mock_func(_, __):
+        return MagicMock(status=status())
+
+    return mock_func
+
+
+class TestWaitForRun:
+    def test_complete_status_ends_run(self, monkeypatch, spell_client):
+        with patch(
+            "spell.client.runs.RunsService", new_callable=PropertyMock
+        ) as mocked_get_run_status:
+            mocked_get_run_status.side_effect = [
+                RunsService.RUNNING,
+                RunsService.COMPLETE,
+            ]
+
+            monkeypatch.setattr(
+                SpellClient,
+                "_get_run",
+                mock_changing_get_run(status=mocked_get_run_status),
+            )
+
+            # Act - if this process completes, we don't see an exception
+            # (it waits and then exits)
+            spell_client.wait_for_run(run_id="test1", delay=0)
+
+    def test_failed_status_ends_run(self, monkeypatch, spell_client):
+        with patch(
+            "spell.client.runs.RunsService", new_callable=PropertyMock
+        ) as mocked_get_run_status:
+            mocked_get_run_status.side_effect = [
+                RunsService.RUNNING,
+                RunsService.FAILED,
+            ]
+
+            monkeypatch.setattr(
+                SpellClient,
+                "_get_run",
+                mock_changing_get_run(status=mocked_get_run_status),
+            )
+
+            # Act - if this process completes, we don't see an exception
+            # (it waits and then exits)
+            spell_client.wait_for_run(run_id="test1", delay=0)
