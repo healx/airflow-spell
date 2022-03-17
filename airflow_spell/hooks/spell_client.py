@@ -195,7 +195,7 @@ class SpellClient(LoggingMixin):
             run = self._get_run(run_id)
             run_status = run.status
 
-            self.log.info(
+            self.log.debug(
                 "Spell run (%s) check status (%s) in %s"
                 % (run_id, run_status, match_status)
             )
@@ -212,8 +212,9 @@ class SpellClient(LoggingMixin):
             pause = _exponential_delay(retries)
 
             self.log.info(
-                "Spell run (%s) status check (%d of %d)"
-                " in the next %.2f seconds" % (run_id, retries, self.MAX_RETRIES, pause)
+                "Spell run (%s) current status (%s), next check (%d of %d)"
+                " in the %.2f seconds"
+                % (run_id, run_status, retries, self.MAX_RETRIES, pause)
             )
 
             _delay(pause)
