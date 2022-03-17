@@ -90,7 +90,7 @@ class SpellClient(LoggingMixin):
         self._poll_for_run_complete(run_id, delay)
         self.log.info("Spell run (%s) has completed" % run_id)
 
-    def check_run_success(self, run_id: str) -> bool:
+    def check_run_complete(self, run_id: str) -> bool:
         """
         Check the final status of the spell run; return True if the run
         'COMPLETE', else raise an AirflowException
@@ -125,10 +125,10 @@ class SpellClient(LoggingMixin):
     def _poll_for_run_running(self, run_id: str, delay: Union[int, float, None] = None):
         """
         Poll for job running. The status that indicates a job is running or
-        already complete are: 'RUNNING'|'SUCCEEDED'|'FAILED'.
+        already complete are: 'RUNNING'|'COMPLETED'|'FAILED'.
 
         So the status options that this will wait for are the transitions from:
-        'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'|'SUCCEEDED'|'FAILED'
+        'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'|'COMPLETED'|'FAILED'
 
         The completed status options are included for cases where the status
         changes too quickly for polling to detect a RUNNING status that moves
@@ -156,10 +156,10 @@ class SpellClient(LoggingMixin):
     ):
         """
         Poll for job completion. The status that indicates job completion
-        are: 'SUCCEEDED'|'FAILED'.
+        are: 'COMPLETED'|'FAILED'.
 
         So the status options that this will wait for are the transitions from:
-        'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'>'SUCCEEDED'|'FAILED'
+        'SUBMITTED'>'PENDING'>'RUNNABLE'>'STARTING'>'RUNNING'>'COMPLETED'|'FAILED'
 
         :param run_id: a spell run ID
         :type run_id: str
@@ -181,7 +181,7 @@ class SpellClient(LoggingMixin):
         :type run_id: str
 
         :param match_status: a list of job status to match; the batch job status are:
-            'SUBMITTED'|'PENDING'|'RUNNABLE'|'STARTING'|'RUNNING'|'SUCCEEDED'|'FAILED'
+            'SUBMITTED'|'PENDING'|'RUNNABLE'|'STARTING'|'RUNNING'|'COMPLETED'|'FAILED'
         :type match_status: List[str]
 
         :rtype: bool
