@@ -34,7 +34,7 @@ services:
         entrypoint: /bin/bash -c "/bin/bash -c \"$${@}\""
         command: |
             /bin/bash -c "
-                airflow initdb
+                airflow db init
                 airflow scheduler -D &
                 airflow webserver
             "
