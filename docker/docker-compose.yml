@@ -20,6 +20,7 @@ services:
             - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
             - AIRFLOW__CORE__DAGS_FOLDER=/usr/local/airflow/dags
             - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+            - AIRFLOW__CORE__PLUGINS_FOLDER=/usr/local/airflow/plugins
             - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
         logging:
             options:
@@ -27,6 +28,7 @@ services:
                 max-file: "3"
         volumes:
             - ../dags:/usr/local/airflow/dags
+            - ../src:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
         entrypoint: /bin/bash -c "/bin/bash -c \"$${@}\""
