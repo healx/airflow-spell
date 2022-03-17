@@ -91,7 +91,7 @@ class SpellClient(LoggingMixin):
         _delay(delay)
         self.poll_for_run_running(run_id, delay)
         self.poll_for_run_complete(run_id, delay)
-        self.log.info(f"Spell run ({run_id}) has completed")
+        self.log.info("Spell run (%s) has completed" % run_id)
 
     def check_run_success(self, run_id: str) -> bool:
         """
@@ -109,17 +109,17 @@ class SpellClient(LoggingMixin):
         run_status = run.status
 
         if run_status == ExternalSpellRunsService.COMPLETE:
-            self.log.info(f"Spell run ({run_id}) completed: {run}")
+            self.log.info("Spell run (%s) completed: %s" % (run_id, run))
             return True
 
         if run_status == ExternalSpellRunsService.FAILED:
-            raise AirflowException(f"Spell run ({run_id}) failed: {run}")
+            raise AirflowException("Spell run (%s) failed: %s" % (run_id, run))
 
         if run_status in STILL_RUNNING:
-            raise AirflowException(f"Spell ({run_id}) is not complete: {run}")
+            raise AirflowException("Spell (%s) is not complete: %s" % (run_id, run))
 
         raise AirflowException(
-            f"Spell ({run_id}) has unknown status ({run_status}): {run}"
+            "Spell (%s) has unknown status (%s): %s" % (run_id, run_status, run)
         )
 
     def poll_for_run_running(self, run_id: str, delay: Union[int, float, None] = None):
@@ -193,7 +193,8 @@ class SpellClient(LoggingMixin):
             run_status = run.status
 
             self.log.info(
-                f"Spell run ({run_id}) check status ({run_status}) in {match_status}"
+                "Spell run (%s) check status (%s) in %s"
+                % (run_id, run_status, match_status)
             )
 
             if run_status in match_status:
@@ -201,14 +202,15 @@ class SpellClient(LoggingMixin):
 
             if retries >= self.MAX_RETRIES:
                 raise AirflowException(
-                    f"Spell run ({run_id}) status checks exceed max_retries"
+                    "Spell run (%s) status checks exceed max_retries" % run_id
                 )
 
             retries += 1
             pause = _exponential_delay(retries)
+
             self.log.info(
-                f"Spell run ({run_id}) status check ({retries} of {self.MAX_RETRIES})"
-                f" in the next {pause:.2f} seconds"
+                "Spell run (%s) status check (%d of %d)"
+                " in the next %.2f seconds" % (run_id, retries, self.MAX_RETRIES, pause)
             )
 
             _delay(pause)
