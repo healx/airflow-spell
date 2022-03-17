@@ -73,9 +73,6 @@ class SpellClient(LoggingMixin):
             self._client = self.hook.get_client()
         return self._client
 
-    def get_run(self, run_id: str) -> ExternalSpellRun:
-        return ExternalSpellRun(self.client.api, self.client.api.get_run(run_id))
-
     def wait_for_run(self, run_id: str, delay: Optional[Union[int, float]] = None):
         """
         Wait for spell run to complete
@@ -89,8 +86,8 @@ class SpellClient(LoggingMixin):
         :raises: AirflowException
         """
         _delay(delay)
-        self.poll_for_run_running(run_id, delay)
-        self.poll_for_run_complete(run_id, delay)
+        self._poll_for_run_running(run_id, delay)
+        self._poll_for_run_complete(run_id, delay)
         self.log.info("Spell run (%s) has completed" % run_id)
 
     def check_run_success(self, run_id: str) -> bool:
@@ -105,7 +102,7 @@ class SpellClient(LoggingMixin):
 
         :raises: AirflowException
         """
-        run = self.get_run(run_id)
+        run = self._get_run(run_id)
         run_status = run.status
 
         if run_status == ExternalSpellRunsService.COMPLETE:
@@ -122,7 +119,10 @@ class SpellClient(LoggingMixin):
             "Spell (%s) has unknown status (%s): %s" % (run_id, run_status, run)
         )
 
-    def poll_for_run_running(self, run_id: str, delay: Union[int, float, None] = None):
+    def _get_run(self, run_id: str) -> ExternalSpellRun:
+        return ExternalSpellRun(self.client.api, self.client.api.get_run(run_id))
+
+    def _poll_for_run_running(self, run_id: str, delay: Union[int, float, None] = None):
         """
         Poll for job running. The status that indicates a job is running or
         already complete are: 'RUNNING'|'SUCCEEDED'|'FAILED'.
@@ -149,9 +149,11 @@ class SpellClient(LoggingMixin):
             ExternalSpellRunsService.SAVING,
             ExternalSpellRunsService.PUSHING,
         ]
-        self.poll_run_status(run_id, running_status)
+        self._poll_run_status(run_id, running_status)
 
-    def poll_for_run_complete(self, run_id: str, delay: Union[int, float, None] = None):
+    def _poll_for_run_complete(
+        self, run_id: str, delay: Union[int, float, None] = None
+    ):
         """
         Poll for job completion. The status that indicates job completion
         are: 'SUCCEEDED'|'FAILED'.
@@ -169,9 +171,9 @@ class SpellClient(LoggingMixin):
         """
         _delay(delay)
         complete_status = ExternalSpellRunsService.FINAL
-        self.poll_run_status(run_id, complete_status)
+        self._poll_run_status(run_id, complete_status)
 
-    def poll_run_status(self, run_id: str, match_status: List[str]) -> bool:
+    def _poll_run_status(self, run_id: str, match_status: List[str]) -> bool:
         """
         Poll for job status using an exponential back-off strategy (with max_retries).
 
@@ -189,7 +191,7 @@ class SpellClient(LoggingMixin):
         retries = 0
         while True:
 
-            run = self.get_run(run_id)
+            run = self._get_run(run_id)
             run_status = run.status
 
             self.log.info(
