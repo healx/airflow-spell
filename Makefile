@@ -20,6 +20,11 @@ build:
 		-f $(docker_dir)/Dockerfile \
 		.
 
+init:
+	docker-compose \
+		-f $(docker_dir)/docker-compose.yml \
+		up airflow-init
+
 up:
 	docker-compose \
 		-f $(docker_dir)/docker-compose.yml \
@@ -28,7 +33,8 @@ up:
 down:
 	docker-compose \
 		-f $(docker_dir)/docker-compose.yml \
-		down
+		down \
+		--volumes
 
 run:
 	docker-compose \
