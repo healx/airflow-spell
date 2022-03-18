@@ -31,9 +31,9 @@ def spell_client() -> SpellClient:
     return SpellClient()
 
 
-def mock_get_run(status) -> Callable:
+def mock_get_run(status, user_exit_code: int = 0) -> Callable:
     def mock_func(_, __):
-        return MagicMock(status=status)
+        return MagicMock(status=status, user_exit_code=user_exit_code)
 
     return mock_func
 
@@ -55,6 +55,19 @@ class TestRunComplete:
     @pytest.mark.parametrize("status", POSSIBLE_INCOMPLETE_SPELL_STATUS)
     def test_run_not_complete_raises_exception(self, status, monkeypatch, spell_client):
         monkeypatch.setattr(SpellClient, "_get_run", mock_get_run(status=status))
+        assert_that(
+            lambda: spell_client.check_run_complete(run_id="test1"),
+            raises(is_instance(AirflowException)),
+        )
+
+    def test_run_complete_with_non_zero_exit_code_raises_exception(
+        self, monkeypatch, spell_client
+    ):
+        monkeypatch.setattr(
+            SpellClient,
+            "_get_run",
+            mock_get_run(status=RunsService.COMPLETE, user_exit_code=1),
+        )
         assert_that(
             lambda: spell_client.check_run_complete(run_id="test1"),
             raises(is_instance(AirflowException)),
