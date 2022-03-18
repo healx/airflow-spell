@@ -93,7 +93,10 @@ class SpellRunOperator(BaseOperator, SpellClient):
             run = self.client.runs.new(**self.kwargs)
             self.spell_run_id = run.id
 
-            self.log.info("Spell run (spell_run_id: %s) started: %s" % (self.spell_run_id, str(run)))
+            self.log.info(
+                "Spell run (spell_run_id: %s) started: %s"
+                % (self.spell_run_id, str(run))
+            )
 
         except Exception as e:
             self.log.info("Spell run (task_id: %s) failed submission" % self.task_id)
@@ -106,7 +109,7 @@ class SpellRunOperator(BaseOperator, SpellClient):
         """
         try:
             self.wait_for_run(self.spell_run_id)
-            self.check_run_success(self.spell_run_id)
+            self.check_run_complete(self.spell_run_id)
             self.log.info("Spell run (%s) succeeded" % self.spell_run_id)
 
         except Exception as e:
