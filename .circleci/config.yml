@@ -52,21 +52,21 @@ commands:
 jobs:
   py38:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - run_tests:
           python_version: "py38-airflow"
 
   py37:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - run_tests:
           python_version: "py37-airflow"
 
   py36:
     docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.6
     steps:
       - run_tests:
           python_version: "py36-airflow"
