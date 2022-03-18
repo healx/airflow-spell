@@ -1,5 +1,28 @@
 # Airflow Spell Operator
 
+## Testing
+
+Run a demonstration airflow environment;
+- `$ make build` - builds the airflow docker image with `spell` installed
+- `$ make init` - initialises databases, creates default user `airflow` password `airflow` (NB This only needs to be run once)
+- `$ make up` - launches airflow environment at http:/0.0.0.0:8080
+
+### Testing DAGs
+
+DAGs in [`dags`](dags/) directory will be visible to the testing airflow instance
+
+### Provisioning the Spell Connection
+
+Put the token from above in a file in the root of the directory called `settings.env`
+
+```
+SPELL_TOKEN=<... your spell token ...>
+```
+
+Then issue `$ make add-spell-connection` and (as long as the docker-compose cluster is running)
+the spell credentials are added to the airflow connections list.
+
+
 ## Install
 
 One of;
@@ -39,28 +62,6 @@ Create spell runs using the `SpellRunOperator`.
 * `spell_ownder: (str)` by default your spell user name, over-riding this is helpful if you have an 
 organizational plan
 * `machine_type`: (str)` for setting the type of machine to run the spell run on (default "CPU")
-
-
-## Testing
-
-Run a demonstration airflow environment;
-- `$ make build` - builds the airflow docker image with `spell` installed
-- `$ make up` - launches airflow environment at http:/0.0.0.0:8080
-
-### Testing DAGs
-
-DAGs in [`dags`](dags/) directory will be visible to the testing airflow instance
-
-### Provisioning the Spell Connection
-
-Put the token from above in a file in the root of the directory called `settings.env`
-
-```
-SPELL_TOKEN=<... your spell token ...>
-```
-
-Then issue `$ make add-spell-connection` and (as long as the docker-compose cluster is running)
-the spell credentials are added to the airflow connections list.
 
 ## Building and Releasing
 
