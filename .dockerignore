@@ -2,9 +2,9 @@
 **
 
 # allow specific directories
+!/src/**
 !/docker/**
 !/setup.py
-!/airflow_spell/**
 
 # ignore unnecessary files inside allowed directories
 **/*~

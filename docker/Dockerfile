@@ -1,5 +1,5 @@
-FROM apache/airflow:2.1.2-python3.9
-COPY . /opt/airflow-spell
+FROM apache/airflow:2.2.4
 USER root
-RUN pip install /opt/airflow-spell
+COPY src/airflow_spell /opt/airflow/plugins
 USER airflow
+RUN /home/airflow/.local/bin/pip install "spell>=0.38.4,<1.0"

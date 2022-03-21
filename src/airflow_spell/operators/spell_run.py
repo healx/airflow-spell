@@ -75,6 +75,9 @@ class SpellRunOperator(BaseOperator, SpellClient):
     ):
         BaseOperator.__init__(self, task_id=task_id)
         SpellClient.__init__(self, spell_conn_id=spell_conn_id, spell_owner=spell_owner)
+        self.log.warning(kwargs)
+        if "default_args" in kwargs:
+            kwargs.pop("default_args")
         self.kwargs = kwargs
 
     def execute(self, context: Dict):

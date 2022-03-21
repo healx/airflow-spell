@@ -103,12 +103,18 @@ class SpellClient(LoggingMixin):
 
         :raises: AirflowException
         """
-        run = self._get_run(run_id)
+        run: ExternalSpellRun = self._get_run(run_id)
         run_status = run.status
 
         if run_status == ExternalSpellRunsService.COMPLETE:
-            self.log.info("Spell run (%s) completed: %s" % (run_id, run))
-            return True
+            if int(run.user_exit_code) == 0:
+                self.log.info("Spell run (%s) completed: %s" % (run_id, run))
+                return True
+            else:
+                raise AirflowException(
+                    "Spell run (%s) completed with a non-zero exit code: %s"
+                    % (run_id, run)
+                )
 
         if run_status == ExternalSpellRunsService.FAILED:
             raise AirflowException("Spell run (%s) failed: %s" % (run_id, run))
