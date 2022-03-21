@@ -9,7 +9,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src", include=["airflow_spell", "airflow_spell.*"]),
     install_requires=[
-        # "apache-airflow>=2.0,<3.0",
+        "apache-airflow>=2.0,<3.0",
         "spell>=0.38.4,<1.0",
     ],
 )
