@@ -80,14 +80,16 @@ class SpellRunOperator(BaseOperator, SpellClient):
             kwargs.pop("default_args")
         self.kwargs = kwargs
 
-    def execute(self, context: Dict):
+    def execute(self, context: Dict) -> int:
         """
         Submit and monitor a Spell run
         :raises: AirflowException
         """
         self.submit_run(context)
         self.monitor_run(context)
-        return "Spell run execute completed."
+
+        # this return value gets pushed as XCom
+        return self.spell_run_id
 
     def submit_run(self, context: Dict):  # pylint: disable=unused-argument
         self.log.info("Running Spell run")
