@@ -8,12 +8,10 @@ workflows:
     jobs:
       - py38
       - py37
-      - py36
   nightly:
     jobs:
       - py38
       - py37
-      - py36
     triggers:
       - schedule:
           cron: "1 1 * * *"
@@ -68,10 +66,3 @@ jobs:
     steps:
       - run_tests:
           python_version: "py37-airflow"
-
-  py36:
-    docker:
-      - image: cimg/python:3.6-node
-    steps:
-      - run_tests:
-          python_version: "py36-airflow"
