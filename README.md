@@ -2,6 +2,8 @@
 
 ## Testing
 
+[![Coverage Status](https://coveralls.io/repos/github/healx/airflow-spell/badge.svg?branch=KGT-356-coveralls-airflow-spell-po-c)](https://coveralls.io/github/healx/airflow-spell?branch=KGT-356-coveralls-airflow-spell-po-c)
+
 Run a demonstration airflow environment;
 - `$ make build` - builds the airflow docker image with `spell` installed
 - `$ make init` - initialises databases, creates default user `airflow` password `airflow` (NB This only needs to be run once)
